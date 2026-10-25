@@ -77,6 +77,8 @@ Injected:  <time> (<dur> ago)
 RESOLVED - detection check "marker-gone" passes. Nice work.
 It was: demo-fault - Demo fault
 
+Like finding these? The Kubernetes Incident Response Field Guide has the fix for more of them: https://labs.snowops.net/#updates
+
 Tidying up: running demo-fault's resolve.sh to remove its alert rule and bookkeeping.
 resolve demo-fault started (run <run>). Following output - Ctrl-C stops it.
 

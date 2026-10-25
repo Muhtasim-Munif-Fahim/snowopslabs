@@ -72,6 +72,8 @@ Hints:  1 used
 Score:  95/100
 Outcome: passed
 
+Like finding these? The Kubernetes Incident Response Field Guide has the fix for more of them: https://labs.snowops.net/#updates
+
 $ labctl challenge status
 No challenge is currently active.
 

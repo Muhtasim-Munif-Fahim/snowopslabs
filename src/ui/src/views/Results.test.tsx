@@ -5,6 +5,7 @@
 // through the real client to the contract server (test/contract.ts).
 import { render, screen, within } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import userEvent from '@testing-library/user-event'
 import { axe, toHaveNoViolations } from 'jest-axe'
 import { afterEach, describe, it, expect, vi } from 'vitest'
 import { Results } from './Results'
@@ -15,6 +16,7 @@ expect.extend(toHaveNoViolations)
 
 afterEach(() => {
   vi.unstubAllGlobals()
+  localStorage.clear()
 })
 
 /** Serves the given history as GET /results. */
@@ -103,5 +105,40 @@ describe('Results view', () => {
     renderResults()
     expect(await screen.findByRole('img', { name: /challenge score trend/i })).toBeInTheDocument()
     expect(screen.queryByRole('img', { name: /MTTR and MTTD/i })).not.toBeInTheDocument()
+  })
+
+  it('shows the signup nudge once there is a resolved run, with the real count', async () => {
+    serveResults([
+      incident('oom-kill', 90, 20, '2026-08-20T10:00:00Z'),
+      challenge('deploy-fix', 80, '2026-08-22T10:00:00Z'),
+    ])
+    renderResults()
+    expect(await screen.findByText(/2 runs resolved so far/)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /get the guide/i })).toHaveAttribute(
+      'href',
+      'https://labs.snowops.net/#updates',
+    )
+  })
+
+  it('has no nudge when nothing has been resolved yet', async () => {
+    serveResults([])
+    renderResults()
+    await screen.findByText(/no runs recorded yet/i)
+    expect(screen.queryByText(/field guide/i)).not.toBeInTheDocument()
+  })
+
+  it('dismissing the nudge hides it and remembers that in this browser', async () => {
+    serveResults([incident('oom-kill', 90, 20, '2026-08-20T10:00:00Z')])
+    const user = userEvent.setup()
+    renderResults()
+    await screen.findByText(/1 run resolved so far/)
+
+    await user.click(screen.getByRole('button', { name: /dismiss/i }))
+    expect(screen.queryByText(/field guide/i)).not.toBeInTheDocument()
+    expect(localStorage.getItem('snowops.dismissedGrowthNudge')).toBe('1')
+
+    renderResults()
+    await screen.findByRole('table')
+    expect(screen.queryByText(/field guide/i)).not.toBeInTheDocument()
   })
 })

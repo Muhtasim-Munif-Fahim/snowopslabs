@@ -151,6 +151,7 @@ After completing the task, run this again to verify the check and advance.`,
 				if remaining == -1 {
 					fmt.Fprintf(out, "All %d modules complete! Path %q finished.\n",
 						len(p.Modules), name)
+					printSignupNudge(out)
 				} else {
 					next := p.Modules[remaining]
 					fmt.Fprintf(out, "Next: module %d - %s\n",

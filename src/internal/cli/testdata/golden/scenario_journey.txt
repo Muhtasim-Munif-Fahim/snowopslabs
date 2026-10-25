@@ -89,6 +89,8 @@ $ labctl scenario verify drill
 PASS  fixed  (script)  got: exit 0, want: exit 0  <dur>
 All 1 checks passed.
 
+Like finding these? The Kubernetes Incident Response Field Guide has the fix for more of them: https://labs.snowops.net/#updates
+
 $ labctl scenario up drill
 [stderr]
 Scenario drill is already active. Re-run with --force to reinstall.
