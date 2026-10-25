@@ -1,5 +1,5 @@
 name: oom-kill
-verified: true
+verified: false
 displayName: "OOMKilled: memory limit too low"
 description: "The pager says {{.WorkloadName}} is being killed and restarted over and over. It came up clean and served fine for a minute, then the restart count started climbing and the service began flapping. Nothing was deployed."
 category: resources
