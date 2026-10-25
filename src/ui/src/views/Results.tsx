@@ -12,6 +12,14 @@ interface ResultsProps {
   notify: NotifyFn
 }
 
+const SIGNUP_URL = 'https://labs.snowops.net/#updates'
+const NUDGE_DISMISSED_KEY = 'snowops.dismissedGrowthNudge'
+
+/** Per-browser only - there is no server to remember this for. */
+function readNudgeDismissed(): boolean {
+  try { return localStorage.getItem(NUDGE_DISMISSED_KEY) === '1' } catch { return false }
+}
+
 /** detectSeconds (MTTD) is recorded in an incident result's meta. */
 function incidentDetectSeconds(meta?: Record<string, unknown>): number | null {
   const d = Number(meta?.detectSeconds)
@@ -78,6 +86,7 @@ type KindFilter = typeof KINDS[number]
 
 export function Results(_props: ResultsProps) {
   const [kindFilter, setKindFilter] = useState<KindFilter>('all')
+  const [nudgeDismissed, setNudgeDismissed] = useState(readNudgeDismissed)
   const { data: records = [], loading, loaded, loadError, refreshing, reload: load } = useApiQuery(
     qk.results,
     api.getResults,
@@ -143,6 +152,12 @@ export function Results(_props: ResultsProps) {
     ...(avgMttd != null ? [{ label: 'Avg MTTD', value: formatElapsed(avgMttd) }] : []),
   ]
 
+  // Same "did it succeed" rule as the Outcome column's badge colour below -
+  // one definition of a win, not a second one invented for this card.
+  const wins = records.filter(r =>
+    r.outcome === 'passed' || r.outcome === 'resolved' || r.outcome === 'auto-resolved',
+  ).length
+
   return (
     <>
       {loadError && (
@@ -164,6 +179,31 @@ export function Results(_props: ResultsProps) {
               <div className="stat-label">{s.label}</div>
             </div>
           ))}
+        </div>
+      )}
+
+      {wins > 0 && !nudgeDismissed && (
+        <div className="banner banner-info">
+          <Icon name="info" size={16} className="banner-icon" />
+          <span className="banner-body">
+            {wins} run{wins === 1 ? '' : 's'} resolved so far. The Kubernetes Incident Response
+            Field Guide has the fix for more like these.
+          </span>
+          <span className="banner-actions">
+            <a className="btn btn-sm" href={SIGNUP_URL} target="_blank" rel="noopener noreferrer">
+              Get the guide
+            </a>
+            <button
+              className="btn btn-sm btn-ghost"
+              aria-label="Dismiss"
+              onClick={() => {
+                try { localStorage.setItem(NUDGE_DISMISSED_KEY, '1') } catch { /* best effort */ }
+                setNudgeDismissed(true)
+              }}
+            >
+              <Icon name="x" size={14} />
+            </button>
+          </span>
         </div>
       )}
 
