@@ -58,6 +58,8 @@ Verifying check "always"...
 ✓ Check passed. Module complete!
 All 2 modules complete! Path "course" finished.
 
+Like finding these? The Kubernetes Incident Response Field Guide has the fix for more of them: https://labs.snowops.net/#updates
+
 $ labctl learn next course
 All 2 modules complete! Path "course" finished.
 

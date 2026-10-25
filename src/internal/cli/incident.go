@@ -201,6 +201,7 @@ var incidentStatusCmd = &cobra.Command{
 		if res.Resolved {
 			fmt.Printf("\nRESOLVED - detection check %q passes. Nice work.\n", res.Check.Name)
 			fmt.Printf("It was: %s - %s\n", res.Fault.Name, res.Fault.DisplayName)
+			printSignupNudge(os.Stdout)
 			tidyAfterFix(cmd, res.Fault.Name, incsvc.Target(incEng.ResolvedTarget(res.Fault)))
 			return nil
 		}

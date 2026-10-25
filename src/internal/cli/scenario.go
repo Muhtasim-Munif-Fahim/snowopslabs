@@ -266,6 +266,7 @@ With --watch, checks are re-run every --interval until they all pass or
 			printCheckResults(results)
 			if checks.AllPass(results) {
 				fmt.Printf("All %d checks passed.\n", len(results))
+				printSignupNudge(os.Stdout)
 				recordScenarioVerify(args[0], results, startedAt)
 				return saveFixture(args[0], fixture, results)
 			}

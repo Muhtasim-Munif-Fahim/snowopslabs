@@ -405,6 +405,9 @@ func printGradingResults(out io.Writer, c *challenge.Challenge, rec *challenge.R
 	fmt.Fprintf(out, "Hints:  %d used\n", rec.HintsUsed)
 	fmt.Fprintf(out, "Score:  %d/100\n", rec.Score)
 	fmt.Fprintf(out, "Outcome: %s\n", rec.Outcome)
+	if rec.Outcome == "passed" {
+		printSignupNudge(out)
+	}
 }
 
 func hintPenaltyValue(c *challenge.Challenge) int {
